@@ -99,7 +99,7 @@ def depthFirstSearch(problem: SearchProblem):
     # util.raiseNotDefined()
     
     
-    closed = dict()
+    closed = []
     frontier = util.Stack()
     frontier.push(Node(problem.getStartState(), None, None))
     while frontier.isEmpty() is not True:
@@ -111,8 +111,8 @@ def depthFirstSearch(problem: SearchProblem):
                 node = node.pred
             actions.reverse()
             return actions
-        if not closed.get(node.state):
-            closed[node.state] = True
+        if node.state not in closed:
+            closed.append(node.state)
             for succ,action,cost in problem.getSuccessors(node.state):
                 frontier.push(Node(succ, node, action))
     return list()
@@ -121,7 +121,7 @@ def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     # util.raiseNotDefined()
-    closed = dict()
+    closed = []
     frontier = util.Queue()
     frontier.push(Node(problem.getStartState(), None, None))
     while frontier.isEmpty() is not True:
@@ -133,8 +133,8 @@ def breadthFirstSearch(problem: SearchProblem):
                 node = node.pred
             actions.reverse()
             return actions
-        if not closed.get(node.state):
-            closed[node.state] = True
+        if node.state not in closed:
+            closed.append(node.state)
             for succ,action,cost in problem.getSuccessors(node.state):
                 frontier.push(Node(succ, node, action))
     return list()
@@ -145,7 +145,7 @@ def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     # util.raiseNotDefined()
-    closed = dict()
+    closed = []
     frontier = util.PriorityQueue()
     frontier.push(Node(problem.getStartState(), None, None),0)
     while frontier.isEmpty() is not True:
@@ -158,8 +158,8 @@ def uniformCostSearch(problem: SearchProblem):
                 node = node.pred
             actions.reverse()
             return actions
-        if not closed.get(node.state):
-            closed[node.state] = True
+        if node.state not in closed:
+            closed.append(node.state)
             for succ,action,cost in problem.getSuccessors(node.state):
                 frontier.push(Node(succ, node, action,cost + node.priority),priority=cost + node.priority)
     return list()
