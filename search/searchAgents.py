@@ -292,6 +292,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        self.startingGameState = startingGameState
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
@@ -378,11 +379,45 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
+    #state = (x,y) , corners_visited
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    distances = []
+    non_visited = []
+    for i in problem.corners:
+        if i not in state[1]:
+            non_visited.append(i)
+    x, y = state[0]
+    if (x, y) not in problem.corners:
+        for corner in non_visited:
+            distance = manhattan_distance(state[0], corner)
+            distances.append(distance + wall_estimate((x, y), corner, problem.walls, len(non_visited)))
+        return min(distances)
+    else:
+        return 0
+def wall_estimate(point, corner, walls, remaining):
+    wall_weight = remaining ** 3 # TBH: empirically to be an exponential factor of the remaining amount of tasks
+
+    wall_down, wall_left = 0, 0
+
+    min_x, max_x = min(point[0], corner[0]), max(point[0], corner[0])
+    min_y, max_y = min(point[1], corner[1]), max(point[1], corner[1])
+
+    for i in range(min_x, max_x + 1):
+        if walls[i][max_y]:
+            wall_down += 1
+        if walls[i][min_y]:
+            wall_left += 1;
+
+    for j in range(min_y, max_y):
+        if walls[max_x][j]:
+            wall_down += 1
+        if walls[min_x][j]:
+            wall_left += 1
+
+    return wall_weight * min(wall_down, wall_left)
+
+def manhattan_distance(point1, point2):
+    return abs(point1[0] - point2[0]) + abs(point1[1] - point2[1])
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
